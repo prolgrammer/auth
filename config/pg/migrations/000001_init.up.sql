@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users
     created_at timestamp not null default NOW()
 );
 
-CREATE TABLE IF NOT EXISTS refresh_tokens
+CREATE TABLE IF NOT EXISTS sessions
 (
     id serial primary key,
     user_id UUID not null references users(id) on delete cascade,
@@ -18,4 +18,4 @@ CREATE TABLE IF NOT EXISTS refresh_tokens
     unique(refresh_token_hash)
 );
 
-CREATE INDEX IF NOT EXISTS idx_refresh_token_user_id ON refresh_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_refresh_token_user_id ON sessions(user_id);
