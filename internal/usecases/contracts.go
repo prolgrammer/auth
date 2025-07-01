@@ -3,6 +3,8 @@ package usecases
 import (
 	"auth/internal/entities"
 	"context"
+	"net/http"
+	"time"
 )
 
 type (
@@ -12,6 +14,7 @@ type (
 
 	SignInSessionRepository interface {
 		Insert(context.Context, entities.Session) error
+		DeleteByUserId(context.Context, string) error
 	}
 
 	SignInHashService interface {
@@ -21,6 +24,10 @@ type (
 
 	SignInSessionService interface {
 		CreateSession(account entities.User) (entities.Session, error)
+	}
+
+	SignInCookieService interface {
+		Set(w http.ResponseWriter, name, value string, expires time.Time)
 	}
 
 	SignUpUserRepository interface {
@@ -38,5 +45,9 @@ type (
 
 	SignUpHashService interface {
 		GenerateHash(stringToHash string) ([]byte, error)
+	}
+
+	SignUpCookieService interface {
+		Set(w http.ResponseWriter, name, value string, expires time.Time)
 	}
 )

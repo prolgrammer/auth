@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"net/http"
 )
 
 type signUpUseCase struct {
@@ -14,10 +15,11 @@ type signUpUseCase struct {
 	sessionRepo    SignUpSessionRepository
 	sessionManager SignUpSessionService
 	hashService    SignUpHashService
+	cookieService  SignUpCookieService
 }
 
 type SignUpUseCase interface {
-	CreateUser(context context.Context, request requests.SignUp) (responses.SignUp, error)
+	CreateUser(context context.Context, writer http.ResponseWriter, request requests.SignUp, userAgent, ip string) (responses.SignUp, error)
 }
 
 func NewSignUpUseCase(
@@ -25,16 +27,18 @@ func NewSignUpUseCase(
 	sessionRepo SignUpSessionRepository,
 	sessionService SignUpSessionService,
 	hashService SignUpHashService,
+	cookieService SignInCookieService,
 ) SignUpUseCase {
 	return &signUpUseCase{
 		userRepo:       userRepo,
 		sessionManager: sessionService,
 		sessionRepo:    sessionRepo,
 		hashService:    hashService,
+		cookieService:  cookieService,
 	}
 }
 
-func (u *signUpUseCase) CreateUser(context context.Context, request requests.SignUp) (responses.SignUp, error) {
+func (u *signUpUseCase) CreateUser(context context.Context, writer http.ResponseWriter, request requests.SignUp, userAgent, ip string) (responses.SignUp, error) {
 	user := entities.NewUser(request.Email, request.Password)
 	err := user.Validate()
 	if err != nil {
@@ -65,6 +69,8 @@ func (u *signUpUseCase) CreateUser(context context.Context, request requests.Sig
 	if err != nil {
 		return responses.SignUp{}, fmt.Errorf("%w: failed to create session", err)
 	}
+	session.IP = ip
+	session.UserAgent = userAgent
 
 	hashedRefreshToken, err := u.hashService.GenerateHash(session.RefreshToken)
 	if err != nil {
@@ -81,6 +87,13 @@ func (u *signUpUseCase) CreateUser(context context.Context, request requests.Sig
 
 	refreshSessionResponse :=
 		responses.NewSession(session.AccessToken, encodedRefreshToken, session.AccessExpiresAt.Unix())
+
+	u.cookieService.Set(
+		writer,
+		"access_token",
+		session.AccessToken,
+		session.AccessExpiresAt,
+	)
 
 	return responses.NewSignUp(user.Id, refreshSessionResponse), nil
 }

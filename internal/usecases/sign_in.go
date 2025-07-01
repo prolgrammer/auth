@@ -8,17 +8,19 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 )
 
 type signInUseCase struct {
 	userRepo       SignInUserRepository
 	sessionRepo    SignInSessionRepository
 	hashProvider   SignInHashService
+	cookieService  SignInCookieService
 	sessionManager SignInSessionService
 }
 
 type SignInUseCase interface {
-	SignIn(context context.Context, request *requests.SignIn) (responses.SignIn, error)
+	SignIn(context context.Context, writer http.ResponseWriter, request *requests.SignIn, userAgent, ip string) (responses.SignIn, error)
 }
 
 func NewSignInUseCase(
@@ -26,19 +28,20 @@ func NewSignInUseCase(
 	sessionRepo SignInSessionRepository,
 	hashProvider SignInHashService,
 	sessionManager SignInSessionService,
+	cookieService SignInCookieService,
 ) SignInUseCase {
 	return &signInUseCase{
 		userRepo:       userRepo,
 		sessionRepo:    sessionRepo,
 		hashProvider:   hashProvider,
 		sessionManager: sessionManager,
+		cookieService:  cookieService,
 	}
 }
 
-func (u *signInUseCase) SignIn(context context.Context, request *requests.SignIn) (responses.SignIn, error) {
+func (u *signInUseCase) SignIn(context context.Context, writer http.ResponseWriter, request *requests.SignIn, userAgent, ip string) (responses.SignIn, error) {
 	email := request.Email
 	user, err := u.userRepo.SelectByEmail(context, entities.Email(email))
-	fmt.Println("user: ", user)
 	if err != nil {
 		if errors.Is(err, repositories.ErrEntityNotFound) {
 			return responses.SignIn{}, fmt.Errorf("failed to find user: %w", ErrEntityNotFound)
@@ -46,17 +49,23 @@ func (u *signInUseCase) SignIn(context context.Context, request *requests.SignIn
 		return responses.SignIn{}, fmt.Errorf("failed to find user: %w", err)
 	}
 
-	fmt.Println("request", request.Password)
-	fmt.Println("user", user.Email)
 	match := u.hashProvider.CompareStringAndHash(request.Password, string(user.Password))
 	if !match {
 		return responses.SignIn{}, fmt.Errorf("failed to compare password: %w", ErrWrongPassword)
+	}
+
+	err = u.sessionRepo.DeleteByUserId(context, user.Id)
+	if err != nil {
+		return responses.SignIn{}, fmt.Errorf("failed to delete session: %w", err)
 	}
 
 	session, err := u.sessionManager.CreateSession(user)
 	if err != nil {
 		return responses.SignIn{}, fmt.Errorf("%w: couldn't create session", err)
 	}
+
+	session.IP = ip
+	session.UserAgent = userAgent
 
 	hashedRefreshToken, err := u.hashProvider.GenerateHash(session.RefreshToken)
 	if err != nil {
@@ -70,6 +79,13 @@ func (u *signInUseCase) SignIn(context context.Context, request *requests.SignIn
 	if err != nil {
 		return responses.SignIn{}, fmt.Errorf("%w: failed to insert session", err)
 	}
+
+	u.cookieService.Set(
+		writer,
+		"access_token",
+		session.AccessToken,
+		session.AccessExpiresAt,
+	)
 
 	refreshSessionResponse := responses.NewSession(session.AccessToken, refreshToken, session.AccessExpiresAt.Unix())
 

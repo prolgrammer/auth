@@ -44,7 +44,10 @@ func (router *signInController) SignIn(c *gin.Context) {
 		return
 	}
 
-	response, err := router.useCase.SignIn(c, &request)
+	userAgent := c.GetHeader("User-Agent")
+	ip := c.ClientIP()
+
+	response, err := router.useCase.SignIn(c, c.Writer, &request, userAgent, ip)
 
 	if err != nil {
 		middleware.AddGinError(c, errors.Wrap(err, "failed to login account"))

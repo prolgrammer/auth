@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"fmt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -31,8 +30,6 @@ func (p *bcryptHashService) GenerateHash(stringToHash string) ([]byte, error) {
 }
 
 func (p *bcryptHashService) CompareStringAndHash(stringToCompare string, hashedString string) bool {
-	fmt.Println("hashedString", hashedString)
-	fmt.Println("stringToCompare", stringToCompare)
 	passwordMatched := bcrypt.CompareHashAndPassword([]byte(hashedString), []byte(stringToCompare))
 	if passwordMatched != nil {
 		return false

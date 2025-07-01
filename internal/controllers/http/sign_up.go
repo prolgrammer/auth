@@ -46,7 +46,10 @@ func (u *signupController) SignUp(c *gin.Context) {
 	}
 	fmt.Println(userRequest)
 
-	response, err := u.user.CreateUser(c, userRequest)
+	userAgent := c.GetHeader("User-Agent")
+	ip := c.ClientIP()
+
+	response, err := u.user.CreateUser(c, c.Writer, userRequest, userAgent, ip)
 
 	if err != nil {
 		middleware.AddGinError(c, errors.Wrap(err, "failed to create account"))

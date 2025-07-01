@@ -33,6 +33,8 @@ type (
 	}
 
 	Cookie struct {
+		Domain   string `mapstructure:"domain"`
+		Path     string `mapstructure:"path"`
 		Secure   bool   `mapstructure:"secure"`
 		HttpOnly bool   `mapstructure:"http_only"`
 		SameSite string `mapstructure:"same_site"`

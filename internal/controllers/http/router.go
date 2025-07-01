@@ -10,7 +10,6 @@ import (
 )
 
 func InitServiceMiddleware(handler *gin.Engine) {
-	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
 
 	handler.Use(cors.New(cors.Config{

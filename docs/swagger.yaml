@@ -1,0 +1,133 @@
+basePath: /
+definitions:
+  requests.SignIn:
+    properties:
+      email:
+        example: example@mail.ru
+        type: string
+      password:
+        example: 123superPassword
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  requests.SignUp:
+    properties:
+      email:
+        example: example@mail.ru
+        type: string
+      password:
+        example: 123superPassword
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  responses.Session:
+    properties:
+      accessToken:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVzQXQiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoiMSIsImlzcyI6IlRPRE8ifQ.K-6Tzcaoae1Cj7jbIMalrtsLXZFrAlg_F_XLegWGo7o
+        type: string
+      expiresAt:
+        example: 1592572800
+        type: integer
+      refreshToken:
+        example: $2a$10$9UKV92GI6504S7RpPPZApe1Llp3fyOS7TH4tQC9ty6OQLxcjIT8uC
+        type: string
+    type: object
+  responses.SignIn:
+    properties:
+      id:
+        example: "2"
+        type: string
+      session:
+        $ref: '#/definitions/responses.Session'
+    type: object
+  responses.SignUp:
+    properties:
+      id:
+        example: "2"
+        type: string
+      session:
+        $ref: '#/definitions/responses.Session'
+    required:
+    - id
+    - session
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: service for auth users
+  title: Auth Service
+  version: 0.0.1
+paths:
+  /signin:
+    post:
+      consumes:
+      - application/json
+      description: вход в аккаунт с использованием email + пароль для получения токенов
+      parameters:
+      - description: структура запроса
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.SignIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.SignIn'
+        "400":
+          description: некорректный формат запроса
+          schema:
+            type: string
+        "401":
+          description: неправильный пароль
+          schema:
+            type: string
+        "404":
+          description: пользователь не найден
+          schema:
+            type: string
+        "500":
+          description: внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: вход в аккаунт
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: регистрация нового пользователя
+      parameters:
+      - description: структура запрос
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.SignUp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.SignUp'
+        "400":
+          description: некорректный формат запроса
+          schema:
+            type: string
+        "409":
+          description: пользователь уже существует
+          schema:
+            type: string
+        "500":
+          description: внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: регистрация нового пользователя
+swagger: "2.0"

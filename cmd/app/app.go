@@ -20,6 +20,7 @@ var (
 
 	bcryptHashService pkg.HashService
 	sessionService    pkg.SessionService
+	cookieService     pkg.CookieService
 
 	userRepository    repositories.UserRepository
 	sessionRepository repositories.SessionRepository
@@ -67,6 +68,8 @@ func initService(cfg *config.Config) {
 	accessTokenService := pkg.NewTokenService([]byte(cfg.SecretKey))
 	refreshTokenService := pkg.NewTokenService([]byte(cfg.SecretKey))
 	sessionService = pkg.NewSessionService(cfg.TokenConfig, accessTokenService, refreshTokenService)
+
+	cookieService = pkg.NewCookieService(cfg.Cookie)
 }
 
 func initRepository() {
@@ -80,6 +83,7 @@ func initUseCases() {
 		sessionRepository,
 		sessionService,
 		bcryptHashService,
+		cookieService,
 	)
 
 	signInUseCase = usecases.NewSignInUseCase(
@@ -87,6 +91,7 @@ func initUseCases() {
 		sessionRepository,
 		bcryptHashService,
 		sessionService,
+		cookieService,
 	)
 }
 
