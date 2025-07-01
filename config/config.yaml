@@ -14,3 +14,7 @@ pg:
   migrations_path: "file://config/pg/migrations"
 jwt:
   secret_key: "someSuperStrongKey"
+cookie:
+  secure: false
+  http_only: true
+  same_site: "lax"

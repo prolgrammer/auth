@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS sessions
     user_id UUID not null references users(id) on delete cascade,
     refresh_token_hash text not null,
     user_agent text,
-    ip_adress text,
+    ip_address text,
     created_at timestamp not null default NOW(),
     expires_at timestamp not null,
     unique(refresh_token_hash)

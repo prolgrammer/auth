@@ -1,9 +1,12 @@
 package http
 
 import (
+	"auth/internal/controllers"
 	"auth/internal/controllers/http/middleware"
+	"auth/internal/controllers/requests"
 	"auth/internal/usecases"
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 	"net/http"
 )
 
@@ -24,7 +27,7 @@ func NewSignInController(
 
 // SignIn godoc
 // @Summary      вход в аккаунт
-// @Description  вход в аккаунт с использованием пар логин + пароль или email + пароль для получения токенов
+// @Description  вход в аккаунт с использованием email + пароль для получения токенов
 // @Accept       json
 // @Produce      json
 // @Param request body requests.SignIn true "структура запроса"
@@ -44,7 +47,7 @@ func (router *signInController) SignIn(c *gin.Context) {
 	response, err := router.useCase.SignIn(c, &request)
 
 	if err != nil {
-		middleware.AddGinError(c, err)
+		middleware.AddGinError(c, errors.Wrap(err, "failed to login account"))
 		return
 	}
 
