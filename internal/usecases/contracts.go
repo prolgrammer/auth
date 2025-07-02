@@ -100,3 +100,9 @@ type (
 		CompareStringAndHash(string, string) bool
 	}
 )
+
+type (
+	GetUserUserRepository interface {
+		SelectByUserId(context.Context, string) (entities.User, error)
+	}
+)

@@ -15,5 +15,5 @@ func (m *middleware) Authenticate(c *gin.Context) {
 		return
 	}
 
-	c.Set("account_id", claims.AccountId)
+	c.Set("user_id", claims.AccountId())
 }
