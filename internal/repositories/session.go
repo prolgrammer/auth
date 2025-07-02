@@ -7,30 +7,30 @@ import (
 
 type SessionRepository interface {
 	Insert(context context.Context, session entities.Session) error
-	SelectByRefreshToken(context context.Context, refreshToken string) (entities.Session, error)
+	SelectByUserId(context context.Context, userId string) (entities.Session, error)
 	Update(context context.Context, session entities.Session) error
 	DeleteByUserId(context context.Context, userId string) error
 }
 
 type sessionRepository struct {
-	insertSessionCommand        InsertSessionCommand
-	selectByRefreshTokenCommand SelectByRefreshTokenCommand
-	updateCommand               UpdateSessionCommand
-	deleteByUserIdCommand       DeleteByUserIdCommand
+	insertSessionCommand  InsertSessionCommand
+	selectUserIdCommand   SelectByRefreshTokenCommand
+	updateCommand         UpdateSessionCommand
+	deleteByUserIdCommand DeleteByUserIdCommand
 }
 
 func NewSessionRepository(
 	insertSessionCommand InsertSessionCommand,
-	selectByRefreshTokenCommand SelectByRefreshTokenCommand,
+	selectByUserIdCommand SelectByRefreshTokenCommand,
 	updateCommand UpdateSessionCommand,
 	deleteByUserIdCommand DeleteByUserIdCommand,
 ) SessionRepository {
 
 	return &sessionRepository{
-		insertSessionCommand:        insertSessionCommand,
-		selectByRefreshTokenCommand: selectByRefreshTokenCommand,
-		updateCommand:               updateCommand,
-		deleteByUserIdCommand:       deleteByUserIdCommand,
+		insertSessionCommand:  insertSessionCommand,
+		selectUserIdCommand:   selectByUserIdCommand,
+		updateCommand:         updateCommand,
+		deleteByUserIdCommand: deleteByUserIdCommand,
 	}
 }
 
@@ -38,8 +38,8 @@ func (s *sessionRepository) Insert(context context.Context, session entities.Ses
 	return s.insertSessionCommand.Execute(context, session)
 }
 
-func (s *sessionRepository) SelectByRefreshToken(context context.Context, refreshToken string) (entities.Session, error) {
-	return s.selectByRefreshTokenCommand.Execute(context, refreshToken)
+func (s *sessionRepository) SelectByUserId(context context.Context, userId string) (entities.Session, error) {
+	return s.selectUserIdCommand.Execute(context, userId)
 }
 
 func (s *sessionRepository) Update(context context.Context, session entities.Session) error {

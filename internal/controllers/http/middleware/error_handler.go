@@ -54,6 +54,10 @@ func (m *middleware) HandleErrors(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
 			return
 		}
+		if errors.Is(err, usecases.ErrUnauthorized) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+			return
+		}
 		///////////////////////////////////////////////////////////////////////////////////
 
 		fmt.Printf("Unexpected error: %s\n", err)

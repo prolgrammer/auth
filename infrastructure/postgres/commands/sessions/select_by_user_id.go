@@ -6,17 +6,23 @@ import (
 	"auth/internal/entities"
 	"auth/internal/repositories"
 	"context"
+	"github.com/google/uuid"
 )
 
 type selectByRefreshTokenCommand struct {
 	client *postgres.Client
 }
 
-func NewSelectByRefreshTokenCommand(client *postgres.Client) repositories.SelectByRefreshTokenCommand {
+func NewSelectByUserIdCommand(client *postgres.Client) repositories.SelectByRefreshTokenCommand {
 	return &selectByRefreshTokenCommand{client: client}
 }
 
-func (c *selectByRefreshTokenCommand) Execute(ctx context.Context, refreshTokenHash string) (entities.Session, error) {
+func (c *selectByRefreshTokenCommand) Execute(ctx context.Context, userId string) (entities.Session, error) {
+
+	uuidUser, err := uuid.Parse(userId)
+	if err != nil {
+		return entities.Session{}, err
+	}
 	sql, args, err := c.client.Builder.
 		Select(
 			commands.SessionIdField,
@@ -24,11 +30,10 @@ func (c *selectByRefreshTokenCommand) Execute(ctx context.Context, refreshTokenH
 			commands.SessionRefreshTokenHash,
 			commands.SessionUserAgentField,
 			commands.SessionIPField,
-			commands.SessionCreatedAtField,
 			commands.SessionExpiresAtField,
 		).
 		From(commands.SessionTable).
-		Where(commands.SessionRefreshTokenHash+" = ?", refreshTokenHash).
+		Where(commands.SessionUserIdField+" = ?", uuidUser).
 		ToSql()
 	if err != nil {
 		return entities.Session{}, err

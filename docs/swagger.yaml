@@ -1,5 +1,17 @@
 basePath: /
 definitions:
+  requests.RefreshSession:
+    properties:
+      accessToken:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVzQXQiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoiMSIsImlzcyI6IlRPRE8ifQ.K-6Tzcaoae1Cj7jbIMalrtsLXZFrAlg_F_XLegWGo7o
+        type: string
+      refreshToken:
+        example: $2a$10$9UKV92GI6504S7RpPPZApe1Llp3fyOS7TH4tQC9ty6OQLxcjIT8uC
+        type: string
+    required:
+    - accessToken
+    - refreshToken
+    type: object
   requests.SignIn:
     properties:
       email:
@@ -62,7 +74,7 @@ info:
   title: Auth Service
   version: 0.0.1
 paths:
-  /signin:
+  /auth/signin:
     post:
       consumes:
       - application/json
@@ -98,6 +110,70 @@ paths:
           schema:
             type: string
       summary: вход в аккаунт
+  /auth/token/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: создание токенов по id пользователя
+      parameters:
+      - description: path format
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Session'
+        "400":
+          description: некорректный формат запроса
+          schema:
+            type: string
+        "404":
+          description: пользователь не найден
+          schema:
+            type: string
+        "500":
+          description: внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: создание токенов
+  /auth/token/update:
+    post:
+      consumes:
+      - application/json
+      description: возвращает новую пару токенов при отправке старой пары и при условии
+        их валидности
+      parameters:
+      - description: request format
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.RefreshSession'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Session'
+        "400":
+          description: некорректный формат запроса
+          schema:
+            type: string
+        "401":
+          description: невалидная пара токенов, либо истекший refresh token
+          schema:
+            type: string
+        "500":
+          description: внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: обновление сессии
   /signup:
     post:
       consumes:

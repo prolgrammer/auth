@@ -74,3 +74,29 @@ type (
 		CreateSession(account entities.User) (entities.Session, error)
 	}
 )
+
+type (
+	RefreshSessionUserRepository interface {
+		SelectByUserId(context.Context, string) (entities.User, error)
+	}
+
+	RefreshSessionSessionRepository interface {
+		SelectByUserId(context.Context, string) (entities.Session, error)
+		DeleteByUserId(context.Context, string) error
+		Update(context context.Context, session entities.Session) error
+	}
+
+	RefreshSessionSessionService interface {
+		ParseToken(token string) (entities.AccessTokenClaims, error)
+		CreateSession(account entities.User) (entities.Session, error)
+	}
+
+	RefreshSessionCookieService interface {
+		Set(w http.ResponseWriter, name, value string, expires time.Time)
+	}
+
+	RefreshSessionHashProvider interface {
+		GenerateHash(stringToHash string) ([]byte, error)
+		CompareStringAndHash(string, string) bool
+	}
+)

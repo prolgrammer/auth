@@ -19,14 +19,14 @@ func CreatePGUserRepo(client *postgres.Client) repositories.UserRepository {
 }
 
 func CreateSessionRepo(client *postgres.Client) repositories.SessionRepository {
-	selectSessionByRefreshTokenCommand := sessions.NewSelectByRefreshTokenCommand(client)
+	selectSessionByUserIdCommand := sessions.NewSelectByUserIdCommand(client)
 	deleteSessionByUserId := sessions.NewDeleteByUserIdCommand(client)
 	insertSessionCommand := sessions.NewInsertSessionCommand(client)
-	updateSessionCommand := sessions.NewUpdateSessionPGCommand(client)
+	updateSessionCommand := sessions.NewUpdateSessionCommand(client)
 
 	return repositories.NewSessionRepository(
 		insertSessionCommand,
-		selectSessionByRefreshTokenCommand,
+		selectSessionByUserIdCommand,
 		updateSessionCommand,
 		deleteSessionByUserId,
 	)

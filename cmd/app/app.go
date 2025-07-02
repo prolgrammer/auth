@@ -28,6 +28,7 @@ var (
 	signInUseCase         usecases.SignInUseCase
 	signUpUseCase         usecases.SignUpUseCase
 	generateTokensUseCase usecases.GenerateTokensUseCase
+	refreshSessionUseCase usecases.RefreshSessionUseCase
 )
 
 func Run() {
@@ -102,6 +103,14 @@ func initUseCases() {
 		cookieService,
 		sessionService,
 	)
+
+	refreshSessionUseCase = usecases.NewRefreshSessionUseCase(
+		userRepository,
+		sessionRepository,
+		sessionService,
+		cookieService,
+		bcryptHashService,
+	)
 }
 
 func runHTTP(cfg *config.Config) {
@@ -113,6 +122,7 @@ func runHTTP(cfg *config.Config) {
 	http2.NewSignUpController(router, signUpUseCase, mw)
 	http2.NewSignInController(router, signInUseCase, mw)
 	http2.NewGenerateTokensController(router, generateTokensUseCase, mw)
+	http2.NewRefreshSessionController(router, refreshSessionUseCase, mw)
 
 	address := fmt.Sprintf("%s:%s", cfg.HTTP.Host, cfg.HTTP.Port)
 	fmt.Printf("starting HTTP server on %s\n", address)

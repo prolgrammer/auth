@@ -8,15 +8,15 @@ import (
 	"context"
 )
 
-type updateSessionPGCommand struct {
+type updateSessionCommand struct {
 	client *postgres.Client
 }
 
-func NewUpdateSessionPGCommand(client *postgres.Client) repositories.UpdateSessionCommand {
-	return &updateSessionPGCommand{client: client}
+func NewUpdateSessionCommand(client *postgres.Client) repositories.UpdateSessionCommand {
+	return &updateSessionCommand{client: client}
 }
 
-func (c *updateSessionPGCommand) Execute(ctx context.Context, session entities.Session) error {
+func (c *updateSessionCommand) Execute(ctx context.Context, session entities.Session) error {
 	sql, args, err := c.client.Builder.
 		Update(commands.SessionTable).
 		Set(commands.SessionRefreshTokenHash, session.RefreshToken).

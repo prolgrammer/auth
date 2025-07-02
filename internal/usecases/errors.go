@@ -12,3 +12,5 @@ var ErrAccessTokenExpired = errors.New("access token is expired")
 var ErrRefreshTokenExpired = errors.New("refresh token is expired")
 var ErrNotAValidAccessToken = errors.New("invalid access token")
 var ErrNotAValidRefreshToken = errors.New("invalid refresh token")
+
+var ErrUnauthorized = errors.New("unauthorized")

@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/signin": {
+        "/auth/signin": {
             "post": {
                 "description": "вход в аккаунт с использованием email + пароль для получения токенов",
                 "consumes": [
@@ -51,6 +51,102 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "неправильный пароль",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "пользователь не найден",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/token/update": {
+            "post": {
+                "description": "возвращает новую пару токенов при отправке старой пары и при условии их валидности",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "обновление сессии",
+                "parameters": [
+                    {
+                        "description": "request format",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.RefreshSession"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Session"
+                        }
+                    },
+                    "400": {
+                        "description": "некорректный формат запроса",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "невалидная пара токенов, либо истекший refresh token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/token/{user_id}": {
+            "get": {
+                "description": "создание токенов по id пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "создание токенов",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "path format",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Session"
+                        }
+                    },
+                    "400": {
+                        "description": "некорректный формат запроса",
                         "schema": {
                             "type": "string"
                         }
@@ -121,6 +217,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "requests.RefreshSession": {
+            "type": "object",
+            "required": [
+                "accessToken",
+                "refreshToken"
+            ],
+            "properties": {
+                "accessToken": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVzQXQiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoiMSIsImlzcyI6IlRPRE8ifQ.K-6Tzcaoae1Cj7jbIMalrtsLXZFrAlg_F_XLegWGo7o"
+                },
+                "refreshToken": {
+                    "type": "string",
+                    "example": "$2a$10$9UKV92GI6504S7RpPPZApe1Llp3fyOS7TH4tQC9ty6OQLxcjIT8uC"
+                }
+            }
+        },
         "requests.SignIn": {
             "type": "object",
             "required": [
