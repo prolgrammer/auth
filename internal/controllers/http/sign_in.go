@@ -22,7 +22,7 @@ func NewSignInController(
 		useCase: useCase,
 	}
 
-	handler.POST("/signin", u.SignIn, middleware.HandleErrors)
+	handler.POST("/auth/signin", u.SignIn, middleware.HandleErrors)
 }
 
 // SignIn godoc
@@ -36,7 +36,7 @@ func NewSignInController(
 // @Failure 401 {object} string "неправильный пароль"
 // @Failure 404 {object} string "пользователь не найден"
 // @Failure 500 {object} string "внутренняя ошибка сервера"
-// @Router       /signin [post]
+// @Router       /auth/signin [post]
 func (router *signInController) SignIn(c *gin.Context) {
 	var request requests.SignIn
 	if err := c.ShouldBind(&request); err != nil {

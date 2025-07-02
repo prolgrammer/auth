@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"auth/internal/controllers/requests"
 	"auth/internal/controllers/responses"
 	"auth/internal/repositories"
 	"context"
@@ -10,26 +9,26 @@ import (
 	"net/http"
 )
 
-type getTokensUseCase struct {
-	userRepo       GetTokensUserRepository
-	sessionRepo    GetTokensSessionRepository
-	hashProvider   GetTokensHashService
-	cookieService  GetTokensCookieService
-	sessionManager GetTokensSessionService
+type generateTokensUseCase struct {
+	userRepo       GenerateTokensUserRepository
+	sessionRepo    GenerateTokensSessionRepository
+	hashProvider   GenerateTokensHashService
+	cookieService  GenerateTokensCookieService
+	sessionManager GenerateTokensSessionService
 }
 
-type GetTokensUseCase interface {
-	GetTokens(context context.Context, writer http.ResponseWriter, request requests.GetTokenRequest, ip, userAgent string) (responses.Session, error)
+type GenerateTokensUseCase interface {
+	GenerateTokens(context context.Context, writer http.ResponseWriter, userId, ip, userAgent string) (responses.Session, error)
 }
 
-func NewGetTokensUseCase(
-	userRepo GetTokensUserRepository,
-	sessionRepo GetTokensSessionRepository,
-	hashProvider GetTokensHashService,
-	cookieService GetTokensCookieService,
-	sessionManager GetTokensSessionService,
-) GetTokensUseCase {
-	return &getTokensUseCase{
+func NewGenerateTokensUseCase(
+	userRepo GenerateTokensUserRepository,
+	sessionRepo GenerateTokensSessionRepository,
+	hashProvider GenerateTokensHashService,
+	cookieService GenerateTokensCookieService,
+	sessionManager GenerateTokensSessionService,
+) GenerateTokensUseCase {
+	return &generateTokensUseCase{
 		userRepo:       userRepo,
 		sessionRepo:    sessionRepo,
 		hashProvider:   hashProvider,
@@ -38,8 +37,7 @@ func NewGetTokensUseCase(
 	}
 }
 
-func (uc *getTokensUseCase) GetTokens(context context.Context, writer http.ResponseWriter, request requests.GetTokenRequest, ip, userAgent string) (responses.Session, error) {
-	userId := request.UserId
+func (uc *generateTokensUseCase) GenerateTokens(context context.Context, writer http.ResponseWriter, userId, ip, userAgent string) (responses.Session, error) {
 	user, err := uc.userRepo.SelectByUserId(context, userId)
 	if err != nil {
 		if errors.Is(err, repositories.ErrEntityNotFound) {

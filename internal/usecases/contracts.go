@@ -53,24 +53,24 @@ type (
 )
 
 type (
-	GetTokensUserRepository interface {
+	GenerateTokensUserRepository interface {
 		SelectByUserId(context.Context, string) (entities.User, error)
 	}
 
-	GetTokensSessionRepository interface {
+	GenerateTokensSessionRepository interface {
 		Insert(context.Context, entities.Session) error
 		DeleteByUserId(context.Context, string) error
 	}
 
-	GetTokensHashService interface {
+	GenerateTokensHashService interface {
 		GenerateHash(stringToHash string) ([]byte, error)
 	}
 
-	GetTokensCookieService interface {
+	GenerateTokensCookieService interface {
 		Set(w http.ResponseWriter, name, value string, expires time.Time)
 	}
 
-	GetTokensSessionService interface {
+	GenerateTokensSessionService interface {
 		CreateSession(account entities.User) (entities.Session, error)
 	}
 )

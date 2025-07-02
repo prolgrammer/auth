@@ -7,7 +7,7 @@ import (
 )
 
 type sessionService struct {
-	config  config.TokenConfig
+	config  config.TokenConfiguration
 	access  TokenService
 	refresh TokenService
 }
@@ -18,7 +18,7 @@ type SessionService interface {
 }
 
 func NewSessionService(
-	config config.TokenConfig,
+	config config.TokenConfiguration,
 	access TokenService,
 	refresh TokenService) SessionService {
 	return &sessionService{config: config, access: access, refresh: refresh}

@@ -11,14 +11,14 @@ import (
 
 type (
 	Config struct {
-		TokenConfig `mapstructure:"token_config"`
-		HTTP        `mapstructure:"http"`
-		JWT         `mapstructure:"jwt"`
-		PG          pg.Config `mapstructure:"pg"`
-		Cookie      `mapstructure:"cookie"`
+		TokenConfiguration `mapstructure:"token_configuration"`
+		HTTP               `mapstructure:"http"`
+		JWT                `mapstructure:"jwt"`
+		PG                 pg.Config `mapstructure:"pg"`
+		Cookie             `mapstructure:"cookie"`
 	}
 
-	TokenConfig struct {
+	TokenConfiguration struct {
 		AccessTokenDuration  time.Duration `mapstructure:"access_token_duration"`
 		RefreshTokenDuration time.Duration `mapstructure:"refresh_token_duration"`
 	}

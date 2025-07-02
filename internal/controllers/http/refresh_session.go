@@ -21,7 +21,7 @@ package http
 //		useCase: useCase,
 //	}
 //
-//	handler.POST("/token/update", u.RefreshSession, middleware.HandleErrors)
+//	handler.POST("/auth/token/update", u.RefreshSession, middleware.HandleErrors)
 //}
 //
 //// RefreshSession godoc
@@ -34,7 +34,7 @@ package http
 //// @Failure 400 {object} string "некорректный формат запроса"
 //// @Failure 401 {object} string "невалидная пара токенов, либо истекший refresh token"
 //// @Failure 500 {object} string "внутренняя ошибка сервера"
-//// @Router       /token/update [post]
+//// @Router       /auth/token/update [post]
 //func (r *refreshSessionController) RefreshSession(c *gin.Context) {
 //	request := requests.RefreshSession{}
 //	if err := c.ShouldBind(&request); err != nil {
