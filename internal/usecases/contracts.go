@@ -106,3 +106,15 @@ type (
 		SelectByUserId(context.Context, string) (entities.User, error)
 	}
 )
+
+type (
+	LogoutSessionRepository interface {
+		DeleteByUserId(context.Context, string) error
+	}
+	LogoutCookieService interface {
+		Clear(w http.ResponseWriter, name string)
+	}
+	LogoutSessionService interface {
+		ParseToken(token string) (entities.AccessTokenClaims, error)
+	}
+)

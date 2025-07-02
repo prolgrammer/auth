@@ -30,6 +30,7 @@ var (
 	generateTokensUseCase usecases.GenerateTokensUseCase
 	refreshSessionUseCase usecases.RefreshSessionUseCase
 	getUserUseCase        usecases.GetUserUseCase
+	logoutUserUseCase     usecases.LogoutUseCase
 )
 
 func Run() {
@@ -114,6 +115,12 @@ func initUseCases() {
 	)
 
 	getUserUseCase = usecases.NewGetUserUseCase(userRepository)
+
+	logoutUserUseCase = usecases.NewLogoutUseCase(
+		sessionService,
+		sessionRepository,
+		cookieService,
+	)
 }
 
 func runHTTP(cfg *config.Config) {
@@ -127,6 +134,7 @@ func runHTTP(cfg *config.Config) {
 	http2.NewGenerateTokensController(router, generateTokensUseCase, mw)
 	http2.NewRefreshSessionController(router, refreshSessionUseCase, mw)
 	http2.NewGetUserController(router, getUserUseCase, mw)
+	http2.NewLogoutController(router, logoutUserUseCase, mw)
 
 	address := fmt.Sprintf("%s:%s", cfg.HTTP.Host, cfg.HTTP.Port)
 	fmt.Printf("starting HTTP server on %s\n", address)

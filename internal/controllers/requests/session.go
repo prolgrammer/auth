@@ -6,5 +6,5 @@ type RefreshSession struct {
 }
 
 type CloseSessions struct {
-	Ids [16]string `json:"ids"`
+	AccessToken string `json:"accessToken" binding:"required" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVzQXQiOiIxMjM0NTY3ODkwIiwidXNlcklkIjoiMSIsImlzcyI6IlRPRE8ifQ.K-6Tzcaoae1Cj7jbIMalrtsLXZFrAlg_F_XLegWGo7o"`
 }
