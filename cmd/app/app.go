@@ -25,8 +25,9 @@ var (
 	userRepository    repositories.UserRepository
 	sessionRepository repositories.SessionRepository
 
-	signInUseCase usecases.SignInUseCase
-	signUpUseCase usecases.SignUpUseCase
+	signInUseCase    usecases.SignInUseCase
+	signUpUseCase    usecases.SignUpUseCase
+	getTokensUseCase usecases.GetTokensUseCase
 )
 
 func Run() {
@@ -93,6 +94,14 @@ func initUseCases() {
 		sessionService,
 		cookieService,
 	)
+
+	getTokensUseCase = usecases.NewGetTokensUseCase(
+		userRepository,
+		sessionRepository,
+		bcryptHashService,
+		cookieService,
+		sessionService,
+	)
 }
 
 func runHTTP(cfg *config.Config) {
@@ -103,6 +112,7 @@ func runHTTP(cfg *config.Config) {
 	http2.InitServiceMiddleware(router)
 	http2.NewSignUpController(router, signUpUseCase, mw)
 	http2.NewSignInController(router, signInUseCase, mw)
+	http2.NewGetTokensController(router, getTokensUseCase, mw)
 
 	address := fmt.Sprintf("%s:%s", cfg.HTTP.Host, cfg.HTTP.Port)
 	fmt.Printf("starting HTTP server on %s\n", address)

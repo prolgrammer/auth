@@ -51,3 +51,26 @@ type (
 		Set(w http.ResponseWriter, name, value string, expires time.Time)
 	}
 )
+
+type (
+	GetTokensUserRepository interface {
+		SelectByUserId(context.Context, string) (entities.User, error)
+	}
+
+	GetTokensSessionRepository interface {
+		Insert(context.Context, entities.Session) error
+		DeleteByUserId(context.Context, string) error
+	}
+
+	GetTokensHashService interface {
+		GenerateHash(stringToHash string) ([]byte, error)
+	}
+
+	GetTokensCookieService interface {
+		Set(w http.ResponseWriter, name, value string, expires time.Time)
+	}
+
+	GetTokensSessionService interface {
+		CreateSession(account entities.User) (entities.Session, error)
+	}
+)

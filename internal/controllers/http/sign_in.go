@@ -44,7 +44,7 @@ func (router *signInController) SignIn(c *gin.Context) {
 		return
 	}
 
-	userAgent := c.GetHeader("User-Agent")
+	userAgent := c.Request.UserAgent()
 	ip := c.ClientIP()
 
 	response, err := router.useCase.SignIn(c, c.Writer, &request, userAgent, ip)

@@ -14,7 +14,7 @@ type userRepo struct {
 
 type UserRepository interface {
 	Insert(context context.Context, user entities.User) (string, error)
-	SelectById(context context.Context, id string) (entities.User, error)
+	SelectByUserId(context context.Context, id string) (entities.User, error)
 	SelectByEmail(context context.Context, email entities.Email) (entities.User, error)
 	CheckEmailExists(context context.Context, email entities.Email) (bool, error)
 }
@@ -34,7 +34,7 @@ func (u *userRepo) Insert(context context.Context, user entities.User) (id strin
 	return u.insertUserCommand.Execute(context, user)
 }
 
-func (u *userRepo) SelectById(context context.Context, id string) (entities.User, error) {
+func (u *userRepo) SelectByUserId(context context.Context, id string) (entities.User, error) {
 	return u.selectUserByIdCommand.Execute(context, id)
 }
 
