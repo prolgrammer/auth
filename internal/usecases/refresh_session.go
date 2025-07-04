@@ -52,7 +52,7 @@ func (r refreshSessionUseCase) RefreshSession(context *gin.Context, writer http.
 	}
 	session, err := r.sessionRepository.SelectByUserId(context, userId)
 	if err != nil {
-		return responses.Session{}, fmt.Errorf("failed to select session: %s", err)
+		return responses.Session{}, fmt.Errorf("failed to select session: %s", ErrSessionNotFound)
 	}
 
 	if userAgent != session.UserAgent {
@@ -61,7 +61,7 @@ func (r refreshSessionUseCase) RefreshSession(context *gin.Context, writer http.
 		if err != nil {
 			return responses.Session{}, fmt.Errorf("failed to delete session: %w", err)
 		}
-		return responses.Session{}, fmt.Errorf("user-agent mismatch: %w", ErrUnauthorized)
+		return responses.Session{}, fmt.Errorf("user-agent mismatch: %w", ErrInvalidUserAgent)
 	}
 
 	go func() {

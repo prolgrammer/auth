@@ -49,7 +49,6 @@ func (r *refreshSessionController) RefreshSession(c *gin.Context) {
 
 	ip := c.ClientIP()
 	userAgent := c.Request.UserAgent()
-	ip = "213"
 
 	response, err := r.useCase.RefreshSession(c, c.Writer, request, ip, userAgent)
 	if err != nil {

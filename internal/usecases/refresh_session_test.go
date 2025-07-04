@@ -136,7 +136,7 @@ func TestRefreshSessionUseCase_RefreshSession_UserAgentMismatch(t *testing.T) {
 	_, err := useCase.RefreshSession(ctx, nil, request, "", "test-agent")
 
 	assert.Error(t, err)
-	assert.ErrorIs(t, err, ErrUnauthorized)
+	assert.ErrorIs(t, err, ErrInvalidUserAgent)
 }
 
 func TestRefreshSessionUseCase_RefreshSession_InvalidRefreshToken(t *testing.T) {

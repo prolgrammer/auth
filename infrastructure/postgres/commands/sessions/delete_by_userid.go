@@ -24,6 +24,12 @@ func (c *deleteByUserIdCommand) Execute(ctx context.Context, userId string) erro
 		return err
 	}
 
-	_, err = c.client.Pool.Exec(ctx, sql, args...)
+	tag, err := c.client.Pool.Exec(ctx, sql, args...)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return repositories.ErrSessionNotFound
+	}
 	return err
 }

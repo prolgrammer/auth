@@ -29,7 +29,7 @@ func NewGetUserController(
 }
 
 // GetUser godoc
-// @Summary      запрос на получение пользователя пользователя
+// @Summary      запрос на получение пользователя
 // @Description  запрос на получение пользователя с использованием токена, переданного в заголовке "Authorization"
 // @Produce      json
 // @Param Authorization header string true "access token"

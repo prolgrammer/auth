@@ -1,7 +1,9 @@
 package usecases
 
 import (
+	"auth/internal/repositories"
 	"context"
+	"errors"
 	"net/http"
 )
 
@@ -26,5 +28,9 @@ func NewLogoutUseCase(
 
 func (l logoutUseCase) Logout(context context.Context, writer http.ResponseWriter, userId string) error {
 	l.cookieService.Clear(writer, "access_token")
-	return l.sessionRepo.DeleteByUserId(context, userId)
+	err := l.sessionRepo.DeleteByUserId(context, userId)
+	if errors.Is(err, repositories.ErrSessionNotFound) {
+		return ErrSessionNotFound
+	}
+	return err
 }

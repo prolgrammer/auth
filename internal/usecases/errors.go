@@ -13,5 +13,6 @@ var ErrRefreshTokenExpired = errors.New("refresh token is expired")
 var ErrNotAValidAccessToken = errors.New("invalid access token")
 var ErrNotAValidRefreshToken = errors.New("invalid refresh token")
 
-var ErrUnauthorized = errors.New("unauthorized")
+var ErrSessionNotFound = errors.New("session not found")
+var ErrInvalidUserAgent = errors.New("invalid user agent")
 var ErrInvalidInput = errors.New("invalid input")

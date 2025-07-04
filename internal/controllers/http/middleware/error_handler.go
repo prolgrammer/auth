@@ -53,7 +53,12 @@ func (m *middleware) HandleErrors(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
 			return
 		}
-		if errors.Is(err, usecases.ErrUnauthorized) {
+		if errors.Is(err, usecases.ErrInvalidUserAgent) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+			return
+		}
+
+		if errors.Is(err, usecases.ErrSessionNotFound) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
 			return
 		}

@@ -143,6 +143,38 @@ paths:
           schema:
             type: string
       summary: вход в аккаунт
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: регистрация нового пользователя
+      parameters:
+      - description: структура запрос
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.SignUp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.SignUp'
+        "400":
+          description: некорректный формат запроса
+          schema:
+            type: string
+        "409":
+          description: пользователь уже существует
+          schema:
+            type: string
+        "500":
+          description: внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: регистрация нового пользователя
   /auth/token/{user_id}:
     get:
       consumes:
@@ -233,36 +265,4 @@ paths:
           schema:
             type: string
       summary: запрос на получение пользователя пользователя
-  /signup:
-    post:
-      consumes:
-      - application/json
-      description: регистрация нового пользователя
-      parameters:
-      - description: структура запрос
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.SignUp'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.SignUp'
-        "400":
-          description: некорректный формат запроса
-          schema:
-            type: string
-        "409":
-          description: пользователь уже существует
-          schema:
-            type: string
-        "500":
-          description: внутренняя ошибка сервера
-          schema:
-            type: string
-      summary: регистрация нового пользователя
 swagger: "2.0"

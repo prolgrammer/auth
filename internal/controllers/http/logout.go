@@ -30,7 +30,7 @@ func NewLogoutController(
 
 // Logout godoc
 // @Summary      запрос на закрытие сессий пользователя
-// @Description  запрос на закрытие сессий пользователя по их id с использованием токена, переданного в заголовке "Authorization"
+// @Description  запрос на закрытие сессий пользователя по его id с использованием токена, переданного в заголовке "Authorization"
 // @Produce      json
 // @Param Authorization header string true "access token"
 // @Success 200 "ok"
