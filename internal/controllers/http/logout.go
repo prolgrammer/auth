@@ -4,11 +4,13 @@ import (
 	"auth/internal/controllers"
 	"auth/internal/controllers/http/middleware"
 	"auth/internal/usecases"
+	"auth/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type logoutController struct {
+	logger  logger.Logger
 	useCase usecases.LogoutUseCase
 }
 
@@ -16,8 +18,10 @@ func NewLogoutController(
 	handler *gin.Engine,
 	useCase usecases.LogoutUseCase,
 	middleware middleware.Middleware,
+	logger logger.Logger,
 ) {
 	g := &logoutController{
+		logger:  logger,
 		useCase: useCase,
 	}
 

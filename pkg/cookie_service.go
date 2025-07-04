@@ -2,7 +2,6 @@ package pkg
 
 import (
 	"auth/config"
-	"fmt"
 	"net/http"
 	"time"
 )
@@ -43,7 +42,6 @@ func NewCookieService(cfg config.Cookie) CookieService {
 }
 
 func (s *cookieService) Set(w http.ResponseWriter, name, value string, expires time.Time) {
-	fmt.Println("expires: ", expires)
 	cookie := &http.Cookie{
 		Name:     name,
 		Value:    value,

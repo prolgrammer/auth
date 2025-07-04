@@ -5,25 +5,29 @@ import (
 	"auth/internal/controllers/http/middleware"
 	"auth/internal/controllers/requests"
 	"auth/internal/usecases"
-	"fmt"
+	"auth/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"net/http"
 )
 
 type signupController struct {
-	user usecases.SignUpUseCase
+	logger logger.Logger
+	user   usecases.SignUpUseCase
 }
 
 func NewSignUpController(
 	handler *gin.Engine,
 	user usecases.SignUpUseCase,
-	middleware middleware.Middleware) {
+	middleware middleware.Middleware,
+	logger logger.Logger,
+) {
 	u := &signupController{
-		user: user,
+		logger: logger,
+		user:   user,
 	}
 
-	handler.POST("/signup", u.SignUp, middleware.HandleErrors)
+	handler.POST("/auth/signup", u.SignUp, middleware.HandleErrors)
 }
 
 // SignUp godoc
@@ -36,7 +40,7 @@ func NewSignUpController(
 // @Failure 400 {object} string "некорректный формат запроса"
 // @Failure 409 {object} string "пользователь уже существует"
 // @Failure 500 {object} string "внутренняя ошибка сервера"
-// @Router       /signup [post]
+// @Router       /auth/signup [post]
 func (u *signupController) SignUp(c *gin.Context) {
 	var userRequest requests.SignUp
 
@@ -44,7 +48,6 @@ func (u *signupController) SignUp(c *gin.Context) {
 		middleware.AddGinError(c, controllers.ErrDataBindError)
 		return
 	}
-	fmt.Println(userRequest)
 
 	userAgent := c.GetHeader("User-Agent")
 	ip := c.ClientIP()

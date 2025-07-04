@@ -13,12 +13,11 @@ type selectByRefreshTokenCommand struct {
 	client *postgres.Client
 }
 
-func NewSelectByUserIdCommand(client *postgres.Client) repositories.SelectByRefreshTokenCommand {
+func NewSelectByUserIdCommand(client *postgres.Client) repositories.SelectByUserIdCommand {
 	return &selectByRefreshTokenCommand{client: client}
 }
 
 func (c *selectByRefreshTokenCommand) Execute(ctx context.Context, userId string) (entities.Session, error) {
-
 	uuidUser, err := uuid.Parse(userId)
 	if err != nil {
 		return entities.Session{}, err
@@ -48,5 +47,6 @@ func (c *selectByRefreshTokenCommand) Execute(ctx context.Context, userId string
 		&session.IP,
 		&session.ExpiresAt,
 	)
+
 	return session, err
 }

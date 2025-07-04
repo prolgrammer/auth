@@ -6,9 +6,8 @@ import (
 )
 
 type logoutUseCase struct {
-	sessionRepo    LogoutSessionRepository
-	sessionService LogoutSessionService
-	cookieService  LogoutCookieService
+	sessionRepo   LogoutSessionRepository
+	cookieService LogoutCookieService
 }
 
 type LogoutUseCase interface {
@@ -16,14 +15,12 @@ type LogoutUseCase interface {
 }
 
 func NewLogoutUseCase(
-	sessionService LogoutSessionService,
 	sessionRepo LogoutSessionRepository,
 	cookieService LogoutCookieService,
 ) LogoutUseCase {
 	return &logoutUseCase{
-		sessionService: sessionService,
-		sessionRepo:    sessionRepo,
-		cookieService:  cookieService,
+		sessionRepo:   sessionRepo,
+		cookieService: cookieService,
 	}
 }
 

@@ -8,6 +8,7 @@ import (
 	"auth/internal/repositories"
 	"auth/internal/usecases"
 	"auth/pkg"
+	"auth/pkg/logger"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ import (
 )
 
 var (
+	l              logger.Logger
 	postgresClient *postgres.Client
 
 	bcryptHashService pkg.HashService
@@ -51,18 +53,21 @@ func Run() {
 func initPackages(cfg *config.Config) {
 	var err error
 
-	postgresClient, err = postgres.NewClient(cfg.PG)
+	l = logger.NewConsoleLogger(logger.LevelSwitch(cfg.LogLevel))
+
+	l.Info().Msgf("starting postgres client")
+	postgresClient, err = postgres.NewClient(cfg.PG, l)
 	if err != nil {
-		fmt.Printf("couldn't start postgres: %s\n", err.Error())
+		l.Fatal().Msgf("couldn't start postgres: %s", err.Error())
 		return
 	}
 	err = postgresClient.MigrateUp()
 	if err != nil {
 		if errors.Is(err, postgres.ErrNoChange) {
-			fmt.Printf("postgres has the latest version. nothing to migrate\n")
+			l.Info().Msgf("postgres has the latest version. nothing to migrate")
 			return
 		}
-		fmt.Printf("failed to migrate postgres: %s\n", err.Error())
+		l.Fatal().Msgf("failed to migrate postgres: %s", err.Error())
 	}
 }
 
@@ -117,7 +122,6 @@ func initUseCases() {
 	getUserUseCase = usecases.NewGetUserUseCase(userRepository)
 
 	logoutUserUseCase = usecases.NewLogoutUseCase(
-		sessionService,
 		sessionRepository,
 		cookieService,
 	)
@@ -127,17 +131,18 @@ func runHTTP(cfg *config.Config) {
 	router := gin.Default()
 	router.HandleMethodNotAllowed = true
 
-	mw := middleware.NewMiddleware(sessionService)
+	mw := middleware.NewMiddleware(sessionService, l)
 	http2.InitServiceMiddleware(router)
-	http2.NewSignUpController(router, signUpUseCase, mw)
-	http2.NewSignInController(router, signInUseCase, mw)
-	http2.NewGenerateTokensController(router, generateTokensUseCase, mw)
-	http2.NewRefreshSessionController(router, refreshSessionUseCase, mw)
-	http2.NewGetUserController(router, getUserUseCase, mw)
-	http2.NewLogoutController(router, logoutUserUseCase, mw)
+	http2.NewSignUpController(router, signUpUseCase, mw, l)
+	http2.NewSignInController(router, signInUseCase, mw, l)
+	http2.NewGenerateTokensController(router, generateTokensUseCase, mw, l)
+	http2.NewRefreshSessionController(router, refreshSessionUseCase, mw, l)
+	http2.NewGetUserController(router, getUserUseCase, mw, l)
+	http2.NewLogoutController(router, logoutUserUseCase, mw, l)
+	http2.NewWebhookController(router, mw, l)
 
 	address := fmt.Sprintf("%s:%s", cfg.HTTP.Host, cfg.HTTP.Port)
-	fmt.Printf("starting HTTP server on %s\n", address)
+	l.Info().Msgf("starting HTTP server on %s", address)
 	err := http.ListenAndServe(address, router)
 	if err != nil {
 		log.Fatal(err.Error())

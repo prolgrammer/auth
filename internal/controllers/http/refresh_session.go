@@ -5,19 +5,24 @@ import (
 	"auth/internal/controllers/http/middleware"
 	"auth/internal/controllers/requests"
 	"auth/internal/usecases"
+	"auth/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type refreshSessionController struct {
+	logger  logger.Logger
 	useCase usecases.RefreshSessionUseCase
 }
 
 func NewRefreshSessionController(
 	handler *gin.Engine,
 	useCase usecases.RefreshSessionUseCase,
-	middleware middleware.Middleware) {
+	middleware middleware.Middleware,
+	logger logger.Logger,
+) {
 	u := &refreshSessionController{
+		logger:  logger,
 		useCase: useCase,
 	}
 
@@ -44,6 +49,7 @@ func (r *refreshSessionController) RefreshSession(c *gin.Context) {
 
 	ip := c.ClientIP()
 	userAgent := c.Request.UserAgent()
+	ip = "213"
 
 	response, err := r.useCase.RefreshSession(c, c.Writer, request, ip, userAgent)
 	if err != nil {

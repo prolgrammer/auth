@@ -22,7 +22,7 @@ type (
 		Execute(ctx context.Context, session entities.Session) error
 	}
 
-	SelectByRefreshTokenCommand interface {
+	SelectByUserIdCommand interface {
 		Execute(ctx context.Context, refreshToken string) (entities.Session, error)
 	}
 

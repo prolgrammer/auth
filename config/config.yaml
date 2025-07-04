@@ -1,22 +1,25 @@
+app:
+  name: "auth"
+  version: "0.0.1"
+  log_level: "debug"
 token_configuration:
   access_token_duration: 600s
   refresh_token_duration: 2592000s
 http:
-  host: "0.0.0.0"
-  port: "8080"
+  host: "${AUTH_HOST}"
+  port: "${AUTH_PORT}"
 pg:
-  user: "postgres"
-  password: "1234"
-  host: "localhost"
-  port: "5432"
-  database: "auth"
-  pool_max: "6"
+  user: "${POSTGRES_USER}"
+  password: "${POSTGRES_PASSWORD}"
+  host: "${POSTGRES_HOST}"
+  port: "${POSTGRES_PORT}"
+  database: "${POSTGRES_DB}"
   migrations_path: "file://config/pg/migrations"
 jwt:
-  secret_key: "someSuperStrongKey"
+  signing_key: "${AUTH_JWT_SIGNING_KEY}"
 cookie:
-  domain: "localhost"
-  path: "/"
-  secure: false
-  http_only: true
-  same_site: "lax"
+  domain: "${COOKIE_DOMAIN}"
+  path: "${COOKIE_PATH}"
+  secure: "${COOKIE_SECURE}"
+  http_only: "${COOKIE_HTTP_ONLY}"
+  same_site: "${COOKIE_SAME_SITE}"

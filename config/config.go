@@ -11,11 +11,18 @@ import (
 
 type (
 	Config struct {
+		App                `mapstructure:"app"`
 		TokenConfiguration `mapstructure:"token_configuration"`
 		HTTP               `mapstructure:"http"`
 		JWT                `mapstructure:"jwt"`
 		PG                 pg.Config `mapstructure:"pg"`
 		Cookie             `mapstructure:"cookie"`
+	}
+
+	App struct {
+		Name     string `mapstructure:"name"`
+		Version  string `mapstructure:"version"`
+		LogLevel string `mapstructure:"log_level"`
 	}
 
 	TokenConfiguration struct {

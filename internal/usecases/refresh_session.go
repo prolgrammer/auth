@@ -46,7 +46,10 @@ func (r refreshSessionUseCase) RefreshSession(context *gin.Context, writer http.
 		return responses.Session{}, err
 	}
 
-	userId := claims["sub"].(string)
+	userId, ok := claims["sub"].(string)
+	if !ok || userId == "" {
+		return responses.Session{}, fmt.Errorf("invalid token claims: %w", ErrInvalidInput)
+	}
 	session, err := r.sessionRepository.SelectByUserId(context, userId)
 	if err != nil {
 		return responses.Session{}, fmt.Errorf("failed to select session: %s", err)
@@ -54,15 +57,18 @@ func (r refreshSessionUseCase) RefreshSession(context *gin.Context, writer http.
 
 	if userAgent != session.UserAgent {
 		err = r.sessionRepository.DeleteByUserId(context, session.UserId)
+		r.cookieService.Clear(writer, "access_token")
 		if err != nil {
 			return responses.Session{}, fmt.Errorf("failed to delete session: %w", err)
 		}
 		return responses.Session{}, fmt.Errorf("user-agent mismatch: %w", ErrUnauthorized)
 	}
 
-	if session.IP != ip {
-		sendWebhook(session.UserId, ip)
-	}
+	go func() {
+		if session.IP != ip {
+			sendWebhook(session.UserId, ip)
+		}
+	}()
 
 	cookieAccessToken, err := context.Cookie("access_token")
 	if err != nil {

@@ -14,14 +14,14 @@ type SessionRepository interface {
 
 type sessionRepository struct {
 	insertSessionCommand  InsertSessionCommand
-	selectUserIdCommand   SelectByRefreshTokenCommand
+	selectUserIdCommand   SelectByUserIdCommand
 	updateCommand         UpdateSessionCommand
 	deleteByUserIdCommand DeleteByUserIdCommand
 }
 
 func NewSessionRepository(
 	insertSessionCommand InsertSessionCommand,
-	selectByUserIdCommand SelectByRefreshTokenCommand,
+	selectByUserIdCommand SelectByUserIdCommand,
 	updateCommand UpdateSessionCommand,
 	deleteByUserIdCommand DeleteByUserIdCommand,
 ) SessionRepository {

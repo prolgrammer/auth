@@ -4,7 +4,6 @@ import (
 	"auth/internal/controllers"
 	"auth/internal/usecases"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -60,7 +59,7 @@ func (m *middleware) HandleErrors(c *gin.Context) {
 		}
 		///////////////////////////////////////////////////////////////////////////////////
 
-		fmt.Printf("Unexpected error: %s\n", err)
+		m.logger.Error().Msgf("Unexpected error: %s\n", err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, "Internal Server Error")
 	}
 }

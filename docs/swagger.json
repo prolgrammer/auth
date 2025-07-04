@@ -9,6 +9,41 @@
     "host": "localhost:8080",
     "basePath": "/",
     "paths": {
+        "/auth/session/logout": {
+            "post": {
+                "description": "запрос на закрытие сессий пользователя по их id с использованием токена, переданного в заголовке \"Authorization\"",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "запрос на закрытие сессий пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok"
+                    },
+                    "401": {
+                        "description": "некорректный access token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/signin": {
             "post": {
                 "description": "вход в аккаунт с использованием email + пароль для получения токенов",
@@ -147,6 +182,44 @@
                     },
                     "404": {
                         "description": "пользователь не найден",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/user": {
+            "get": {
+                "description": "запрос на получение пользователя с использованием токена, переданного в заголовке \"Authorization\"",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "запрос на получение пользователя пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.User"
+                        }
+                    },
+                    "401": {
+                        "description": "некорректный access token",
                         "schema": {
                             "type": "string"
                         }
@@ -304,6 +377,20 @@
                 },
                 "session": {
                     "$ref": "#/definitions/responses.Session"
+                }
+            }
+        },
+        "responses.User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "registrationDate": {
+                    "type": "string"
                 }
             }
         }

@@ -3,11 +3,13 @@ package http
 import (
 	"auth/internal/controllers/http/middleware"
 	"auth/internal/usecases"
+	"auth/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type getTokensController struct {
+	logger  logger.Logger
 	useCase usecases.GenerateTokensUseCase
 }
 
@@ -15,8 +17,10 @@ func NewGenerateTokensController(
 	handler *gin.Engine,
 	useCase usecases.GenerateTokensUseCase,
 	middleware middleware.Middleware,
+	logger logger.Logger,
 ) {
 	u := &getTokensController{
+		logger:  logger,
 		useCase: useCase,
 	}
 
@@ -40,7 +44,7 @@ func (router *getTokensController) GenerateTokens(c *gin.Context) {
 	userAgent := c.Request.UserAgent()
 	ip := c.ClientIP()
 
-	response, err := router.useCase.GenerateTokens(c, c.Writer, userId, userAgent, ip)
+	response, err := router.useCase.GenerateTokens(c, c.Writer, userId, ip, userAgent)
 	if err != nil {
 		middleware.AddGinError(c, err)
 		return

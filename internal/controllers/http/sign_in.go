@@ -5,20 +5,25 @@ import (
 	"auth/internal/controllers/http/middleware"
 	"auth/internal/controllers/requests"
 	"auth/internal/usecases"
+	"auth/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"net/http"
 )
 
 type signInController struct {
+	logger  logger.Logger
 	useCase usecases.SignInUseCase
 }
 
 func NewSignInController(
 	handler *gin.Engine,
 	useCase usecases.SignInUseCase,
-	middleware middleware.Middleware) {
+	middleware middleware.Middleware,
+	logger logger.Logger,
+) {
 	u := &signInController{
+		logger:  logger,
 		useCase: useCase,
 	}
 
@@ -39,7 +44,7 @@ func NewSignInController(
 // @Router       /auth/signin [post]
 func (router *signInController) SignIn(c *gin.Context) {
 	var request requests.SignIn
-	if err := c.ShouldBind(&request); err != nil {
+	if err := c.ShouldBindJSON(&request); err != nil {
 		middleware.AddGinError(c, controllers.ErrDataBindError)
 		return
 	}

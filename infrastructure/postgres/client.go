@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"auth/config/pg"
+	"auth/pkg/logger"
 	"context"
 	"errors"
 	"fmt"
@@ -26,10 +27,11 @@ type Client struct {
 	Builder squirrel.StatementBuilderType
 	Pool    *pgxpool.Pool
 	cfg     pg.Config
+	logger  logger.Logger
 }
 
-func NewClient(config pg.Config) (*Client, error) {
-	client := &Client{cfg: config}
+func NewClient(config pg.Config, logger logger.Logger) (*Client, error) {
+	client := &Client{logger: logger, cfg: config}
 
 	connAttempts := config.RetryConnectionAttempts
 	connTimeout := config.RetryConnectionTimeout
@@ -47,7 +49,7 @@ func NewClient(config pg.Config) (*Client, error) {
 
 	poolConfig, err := pgxpool.ParseConfig(connectionString)
 	if err != nil {
-		fmt.Printf("couldn't parse postgres connection string\n")
+		logger.Err(err).Msgf("couldn't parse postgres connection string")
 		return nil, err
 	}
 
@@ -60,15 +62,15 @@ func NewClient(config pg.Config) (*Client, error) {
 			}
 		}
 
-		fmt.Printf("failed to connect to postgres\n")
-		fmt.Printf("Postgres client is trying to connect, attempts left: %d\n", connAttempts)
+		logger.Err(err).Msgf("failed to connect to postgres")
+		logger.Info().Msgf("Postgres client is trying to connect, attempts left: %d", connAttempts)
 		<-time.After(connTimeout)
 
 		connAttempts--
 	}
 
 	if err != nil {
-		fmt.Println("couldn't connect to postgres")
+		logger.Err(err).Msgf("couldn't connect to postgres")
 		return nil, err
 	}
 

@@ -4,11 +4,13 @@ import (
 	"auth/internal/controllers"
 	"auth/internal/controllers/http/middleware"
 	"auth/internal/usecases"
+	"auth/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type getUserController struct {
+	logger  logger.Logger
 	useCase usecases.GetUserUseCase
 }
 
@@ -16,8 +18,10 @@ func NewGetUserController(
 	handler *gin.Engine,
 	useCase usecases.GetUserUseCase,
 	middleware middleware.Middleware,
+	logger logger.Logger,
 ) {
 	g := &getUserController{
+		logger:  logger,
 		useCase: useCase,
 	}
 

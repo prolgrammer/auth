@@ -14,3 +14,4 @@ var ErrNotAValidAccessToken = errors.New("invalid access token")
 var ErrNotAValidRefreshToken = errors.New("invalid refresh token")
 
 var ErrUnauthorized = errors.New("unauthorized")
+var ErrInvalidInput = errors.New("invalid input")

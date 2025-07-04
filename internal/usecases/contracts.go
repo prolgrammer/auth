@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+//go:generate mockgen -source=contracts.go --destination=mock_test.go -package=usecases
+
 type (
 	SignInUserRepository interface {
 		SelectByEmail(context.Context, entities.Email) (entities.User, error)
@@ -93,6 +95,7 @@ type (
 
 	RefreshSessionCookieService interface {
 		Set(w http.ResponseWriter, name, value string, expires time.Time)
+		Clear(w http.ResponseWriter, name string)
 	}
 
 	RefreshSessionHashProvider interface {

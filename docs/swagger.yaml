@@ -67,6 +67,15 @@ definitions:
     - id
     - session
     type: object
+  responses.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      registrationDate:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -74,6 +83,30 @@ info:
   title: Auth Service
   version: 0.0.1
 paths:
+  /auth/session/logout:
+    post:
+      description: запрос на закрытие сессий пользователя по их id с использованием
+        токена, переданного в заголовке "Authorization"
+      parameters:
+      - description: access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+        "401":
+          description: некорректный access token
+          schema:
+            type: string
+        "500":
+          description: внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: запрос на закрытие сессий пользователя
   /auth/signin:
     post:
       consumes:
@@ -174,6 +207,32 @@ paths:
           schema:
             type: string
       summary: обновление сессии
+  /auth/user:
+    get:
+      description: запрос на получение пользователя с использованием токена, переданного
+        в заголовке "Authorization"
+      parameters:
+      - description: access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.User'
+        "401":
+          description: некорректный access token
+          schema:
+            type: string
+        "500":
+          description: внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: запрос на получение пользователя пользователя
   /signup:
     post:
       consumes:

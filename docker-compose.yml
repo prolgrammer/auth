@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  auth:
+    container_name: "auth"
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth_db
+
+  auth_db:
+    image: postgres:latest
+    container_name: "auth_db"
+    env_file:
+      - .env
+    volumes:
+      - ./config/pg:/etc/postgres
